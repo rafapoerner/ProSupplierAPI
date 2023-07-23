@@ -2,6 +2,8 @@ using ProSupplier.Api.Configuration;
 using ProSupplier.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using ProSupplier.Api.Extentions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,7 @@ builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+
 // Adicionando suporte a User Secrets
 if (builder.Environment.IsProduction())
 {
@@ -29,6 +32,7 @@ builder.Services.WebApiConfig();
 
 // Swagger Configurations
 builder.Services.AddSwaggerConfig();
+builder.Services.AddSwaggerGen();
 
 // Extension Method de resolução de DI
 builder.Services.ResolveDependencies();
@@ -39,11 +43,10 @@ builder.Services.AddRazorPages();
 // Extension Method de configuração do Identity
 builder.Services.AddIdentityConfiguration(builder.Configuration);
 
-builder.Services.AddSwaggerGen();
-
 // Extension Method de Authorization (Policies)
 //builder.Services.AddAuthorizationConfig();
 
+builder.Services.AddLoggingConfiguration(builder.Configuration);
 
 // Extension Method de configuração KissLog
 //builder.Services.RegisterKissLogListeners();
@@ -96,8 +99,9 @@ app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 // Mapeando componentes Razor Pages (ex: Identity)
 app.MapRazorPages();
 
-// Adicionando suporte ao KissLog
-//app.RegisterKissLogListeners(builder.Configuration);
+app.UseLoggingConfiguration();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMvcConfiguration();
 

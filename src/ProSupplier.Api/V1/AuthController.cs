@@ -20,17 +20,21 @@ namespace ProSupplier.Api.V1
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
-        
+        private readonly ILogger _logger;
+
+
 
         public AuthController(INotifier notifier,
                               SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager,
                               IUser user,
-                              IOptions<AppSettings> appSettings) : base(notifier, user)
+                              IOptions<AppSettings> appSettings,
+                              ILogger<AuthController> logger) : base(notifier, user)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
 
         [HttpPost("new-account")]
@@ -72,6 +76,7 @@ namespace ProSupplier.Api.V1
 
             if (result.Succeeded)
             {
+                _logger.LogInformation("Usuário " + loginUser.Email + " logado com sucesso!");
                 return CustomResponse(await GerarJwt(loginUser.Email));
             }
             if (result.IsLockedOut)

@@ -12,14 +12,14 @@ namespace ProSupplier.Api.V1
     [Authorize]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/suppliers")]
-    public class SuplliersController : MainController
+    public class SuppliersController : MainController
     {
         private readonly IFornecedorRepository _fornecedorRepository;
         private readonly IEnderecoRepository _enderecoRepository;
         private readonly IFornecedorService _fornecedorService;
         private readonly IMapper _mapper;
 
-        public SuplliersController(IFornecedorRepository fornecedorRepository,
+        public SuppliersController(IFornecedorRepository fornecedorRepository,
                                    IFornecedorService fornecedorService,
                                    IEnderecoRepository enderecoRepository,
                                    INotifier notifier,
